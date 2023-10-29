@@ -2,8 +2,8 @@ from functools import lru_cache
 
 import pydantic
 from dotenv import find_dotenv
-from pydantic_settings import BaseSettings
-from pydantic.types import PositiveInt, SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic.types import PositiveInt
 
 __all__ = ["Settings", "get_settings"]
 
@@ -25,12 +25,13 @@ class Settings(_Settings):
     #: str: Postgresql user.
     POSTGRES_USER: str
     #: SecretStr: Postgresql password.
-    POSTGRES_PASSWORD: SecretStr
+    POSTGRES_PASSWORD: str
     #: str: Postgresql database name.
     POSTGRES_DB: str
 
+    model_config = SettingsConfigDict(env_file=find_dotenv(".env"))
 
-@lru_cache()
-def get_settings(env_file: str = ".env") -> Settings:
-    """Create settings instance."""
-    return Settings(_env_file=find_dotenv(env_file))
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()

@@ -8,8 +8,8 @@ class Users(Base):
     email = Column(String(120), index=True, unique=True)
     password = Column(String(128))
 
-    def __init__(self, name, email, password):
-        self.username = name
+    def __init__(self, username, email, password):
+        self.username = username
         self.email = email
         self.password = hashing.get_password_hash(password)
 
