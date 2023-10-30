@@ -1,5 +1,4 @@
-import logging
-
+from app.logger import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from app.settings import settings
@@ -21,4 +20,4 @@ async def get_session() -> AsyncSession:
         async with SessionLocal() as session:
             yield session
     except SQLAlchemyError as e:
-        logging.exception(f"Sqlalchemy exception: {e}")
+        logger.exception(f"Sqlalchemy exception: {e}")

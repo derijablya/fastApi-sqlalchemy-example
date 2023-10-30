@@ -39,8 +39,7 @@ async def create_user(
     response_model=list[UserOut] | None,
 )
 async def get_users(
-    service: services.Users = Depends(),
-    # user=Depends(get_current_user)
+    service: services.Users = Depends(), user=Depends(get_current_user)
 ):
     return await service.get_users()
 
@@ -51,8 +50,7 @@ async def get_users(
     response_model=UserOut | None,
 )
 async def get_user_by_id(
-    user_id: int,
-    service: services.Users = Depends(),
+    user_id: int, service: services.Users = Depends(), user=Depends(get_current_user)
 ):
     return await service.get_user_by_id(user_id)
 
