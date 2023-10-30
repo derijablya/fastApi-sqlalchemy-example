@@ -7,7 +7,7 @@ class User(BaseModel):
     password: str
 
 
-class UserIn(BaseModel):
+class UserOut(BaseModel):
     id: int
     username: constr(min_length=2, max_length=50)
     email: EmailStr

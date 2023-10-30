@@ -1,13 +1,12 @@
 import logging
-from typing import List
 
 from fastapi import Depends, HTTPException
-from sqlalchemy import select, insert, delete
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models, serializers
 from app.repository.postgres import get_session
-from app.serializers.users import UserIn
+from app.serializers.users import UserOut
 
 
 class Users:
@@ -16,12 +15,17 @@ class Users:
 
     async def create_user(self, request: serializers.User):
         try:
-            stmt = select(models.Users.id, models.Users.username, models.Users.email).from_statement(
-                insert(models.Users).values(request.model_dump()).
-                returning(models.Users.id, models.Users.username, models.Users.email))
-            result = await self.repository.execute(stmt)
+            new_user = models.Users(
+                username=request.username,
+                email=request.email,
+                password=request.password,
+            )
+            self.repository.add(new_user)
             await self.repository.commit()
-            return result.first()
+            await self.repository.refresh(new_user)
+            return UserOut(
+                id=new_user.id, username=new_user.username, email=new_user.email
+            )
         except Exception as e:
             logging.exception(e, exc_info=True)
 
@@ -35,6 +39,13 @@ class Users:
             if not user:
                 return HTTPException(status_code=404, detail="User not found")
             return user
+        except Exception as e:
+            logging.exception(e, exc_info=True)
+
+    async def get_user_by_name(self, username: str):
+        try:
+            stmt = select(models.Users).where(models.Users.username == username)
+            return await self.repository.scalar(stmt)
         except Exception as e:
             logging.exception(e, exc_info=True)
 

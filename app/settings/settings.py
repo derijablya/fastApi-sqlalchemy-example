@@ -29,6 +29,9 @@ class Settings(_Settings):
     #: str: Postgresql database name.
     POSTGRES_DB: str
 
+    JWT_ENCRYPT_ALGORITHM: str
+    JWT_SECRET_KEY: str
+
     model_config = SettingsConfigDict(env_file=find_dotenv(".env"))
 
 
